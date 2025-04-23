@@ -10,6 +10,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN dpkg --add-architecture arm64 && \
     apt-get update && apt-get install -y --no-install-recommends \
         wget \
+        curl \
         build-essential \
         ca-certificates \
         linux-libc-dev-arm64-cross \
@@ -27,12 +28,20 @@ RUN dpkg --add-architecture arm64 && \
         zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Go 1.23
-RUN wget https://go.dev/dl/go1.23.1.linux-amd64.tar.gz && \
-    tar -C /usr/local -xzf go1.23.1.linux-amd64.tar.gz && \
-    rm go1.23.1.linux-amd64.tar.gz
+RUN apt-get update
+
+# Install Go 1.24.2
+RUN wget https://go.dev/dl/go1.24.2.linux-arm64.tar.gz && \
+    tar -C /usr/local -xzf go1.24.2.linux-arm64.tar.gz && \
+    rm go1.24.2.linux-arm64.tar.gz
 
 ENV PATH="/usr/local/go/bin:${PATH}"
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+# Check cargo is visible
+RUN cargo --help
 
 # Download and install Linaro toolchain
 RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/aarch64-linux-gnu-7.5.0-linaro.tgz && \
@@ -82,8 +91,4 @@ ENV CGO_ENABLED="1"
 ENV CGO_LDFLAGS="-L${SYSROOT}/usr/lib  -L/usr/lib/aarch64-linux-gnu -lSDL2_image -lSDL2_ttf -lSDL2 -ldl -lpthread -lm"
 ENV CGO_CFLAGS="-I${SYSROOT}/usr/include -I/usr/aarch64-linux-gnu/include -I/usr/aarch64-linux-gnu/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT"
 
-RUN useradd -m toolchain
-USER toolchain
-RUN mkdir -p /home/toolchain/workspace
-
-WORKDIR /home/toolchain/workspace
+ENTRYPOINT ["/bin/bash"]
