@@ -74,6 +74,8 @@ RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/2023
     make install && \
     rm -rf /tmp/SDL2-2.26.1 SDL2-2.26.1.GE8300.tgz
 
+COPY lib/* ${SYSROOT}/lib
+
 # Set PKG_CONFIG_PATH to include SDL2 directories
 ENV PKG_CONFIG_PATH="/usr/aarch64-linux-gnu/lib/pkgconfig:/usr/lib/aarch64-linux-gnu/pkgconfig:${SYSROOT}/usr/lib/pkgconfig"
 
