@@ -12,6 +12,10 @@ RUN dpkg --add-architecture arm64 && \
         wget \
         curl \
         build-essential \
+        cmake \
+        libclang-dev \
+        libgbm-dev \
+        libdrm-dev \
         ca-certificates \
         linux-libc-dev-arm64-cross \
         libc6-arm64-cross \
@@ -42,6 +46,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 # Check cargo is visible
 RUN cargo --help
+RUN rustup target add aarch64-unknown-linux-gnu
 
 # Download and install Linaro toolchain
 RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/aarch64-linux-gnu-7.5.0-linaro.tgz && \
@@ -58,8 +63,9 @@ RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/2023
 
 ENV PATH="/usr/local/aarch64-linux-gnu-7.5.0-linaro/bin:${PATH}"
 ENV SYSROOT="/usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot"
-
 ENV CC="/usr/local/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-gcc --sysroot=${SYSROOT} -I${SYSROOT}/usr/include"
+
+COPY lib/* ${SYSROOT}/lib
 
 # Download and build SDL2
 RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDL2-2.26.1.GE8300.tgz && \
@@ -73,8 +79,6 @@ RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/2023
     make && \
     make install && \
     rm -rf /tmp/SDL2-2.26.1 SDL2-2.26.1.GE8300.tgz
-
-COPY lib/* ${SYSROOT}/lib
 
 # Set PKG_CONFIG_PATH to include SDL2 directories
 ENV PKG_CONFIG_PATH="/usr/aarch64-linux-gnu/lib/pkgconfig:/usr/lib/aarch64-linux-gnu/pkgconfig:${SYSROOT}/usr/lib/pkgconfig"
@@ -91,6 +95,8 @@ ENV GOOS="linux"
 ENV GOARCH="arm64"
 ENV CGO_ENABLED="1"
 ENV CGO_LDFLAGS="-L${SYSROOT}/usr/lib  -L/usr/lib/aarch64-linux-gnu -lSDL2_image -lSDL2_ttf -lSDL2 -ldl -lpthread -lm"
-ENV CGO_CFLAGS="-I${SYSROOT}/usr/include -I/usr/aarch64-linux-gnu/include -I/usr/aarch64-linux-gnu/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT"
+ENV CGO_CFLAGS="-I${SYSROOT}/usr/include -I/usr/aarch64-linux-gnu/include -I/usr/aarch64-linux-gnu/include/SDL2 -I/usr/include/SDL2 -I/usr/include -D_REENTRANT"
+ENV CXXFLAGS="-I${SYSROOT}/usr/include -I/usr/aarch64-linux-gnu/include -I/usr/aarch64-linux-gnu/include/SDL2 -I/usr/include/SDL2 -I/usr/include -D_REENTRANT"
+ENV CFLAGS="-I${SYSROOT}/usr/include -I/usr/aarch64-linux-gnu/include -I/usr/aarch64-linux-gnu/include/SDL2 -I/usr/include/SDL2 -I/usr/include -D_REENTRANT"
 
 ENTRYPOINT ["/bin/bash"]
