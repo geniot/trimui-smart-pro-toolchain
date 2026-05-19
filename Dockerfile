@@ -14,8 +14,6 @@ RUN dpkg --add-architecture arm64 && \
         build-essential \
         cmake \
         libclang-dev \
-        libgbm-dev \
-        libdrm-dev \
         ca-certificates \
         linux-libc-dev-arm64-cross \
         libc6-arm64-cross \
