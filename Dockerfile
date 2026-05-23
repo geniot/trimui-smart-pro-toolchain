@@ -9,6 +9,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Install dependencies and update CA certificates
 RUN dpkg --add-architecture arm64 && \
     apt-get update && apt-get install -y --no-install-recommends \
+        bash \
         wget \
         curl \
         build-essential \
@@ -29,6 +30,7 @@ RUN dpkg --add-architecture arm64 && \
         libgles2-mesa-dev \
         pkg-config \
         zip \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update
@@ -81,7 +83,7 @@ RUN tar -xzf SDL2-2.26.1.GE8300.tgz -C /tmp && \
                 --with-sysroot=${SYSROOT} && \
     make && \
     make install && \
-    rm -rf /tmp/SDL2-2.26.1 SDL2-2.26.1.GE8300.tgz
+    rm -rf /tmp/SDL2-2.26.1 && rm /SDL2-2.26.1.GE8300.tgz
 
 # Set PKG_CONFIG_PATH to include SDL2 directories
 ENV PKG_CONFIG_PATH="/usr/aarch64-linux-gnu/lib/pkgconfig:/usr/lib/aarch64-linux-gnu/pkgconfig:${SYSROOT}/usr/lib/pkgconfig"
