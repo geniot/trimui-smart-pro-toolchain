@@ -35,8 +35,8 @@ RUN apt-get update
 
 # Install Go 1.24.2
 COPY downloads/go1.24.2.linux-arm64.tar.gz .
-RUN #wget https://go.dev/dl/go1.24.2.linux-arm64.tar.gz && \
-    tar -C /usr/local -xzf go1.24.2.linux-arm64.tar.gz && \
+#RUN wget https://go.dev/dl/go1.24.2.linux-arm64.tar.gz && \
+RUN tar -C /usr/local -xzf go1.24.2.linux-arm64.tar.gz && \
     rm go1.24.2.linux-arm64.tar.gz
 
 ENV PATH="/usr/local/go/bin:${PATH}"
@@ -50,14 +50,14 @@ RUN rustup target add aarch64-unknown-linux-gnu
 
 # Download and install Linaro toolchain
 COPY downloads/aarch64-linux-gnu-7.5.0-linaro.tgz .
-RUN #wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/aarch64-linux-gnu-7.5.0-linaro.tgz && \
-    tar -C /usr/local -xzf aarch64-linux-gnu-7.5.0-linaro.tgz && \
+#RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/aarch64-linux-gnu-7.5.0-linaro.tgz && \
+RUN tar -C /usr/local -xzf aarch64-linux-gnu-7.5.0-linaro.tgz && \
     rm aarch64-linux-gnu-7.5.0-linaro.tgz
 
 # Download and install additional libc files
 COPY downloads/SDK_usr_tg5040_a133p.tgz .
-RUN #wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDK_usr_tg5040_a133p.tgz && \
-    tar -xzf SDK_usr_tg5040_a133p.tgz -C /tmp && \
+#RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDK_usr_tg5040_a133p.tgz && \
+RUN tar -xzf SDK_usr_tg5040_a133p.tgz -C /tmp && \
     mkdir -p /usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot/usr && \
     cp -r /usr/local/aarch64-linux-gnu-7.5.0-linaro/aarch64-linux-gnu/libc/* /usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot && \
     cp -r /tmp/usr/* /usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot/usr/ && \
@@ -71,8 +71,8 @@ COPY lib/* ${SYSROOT}/lib
 
 # Download and build SDL2
 COPY downloads/SDL2-2.26.1.GE8300.tgz .
-RUN #wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDL2-2.26.1.GE8300.tgz && \
-    tar -xzf SDL2-2.26.1.GE8300.tgz -C /tmp && \
+#RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDL2-2.26.1.GE8300.tgz && \
+RUN tar -xzf SDL2-2.26.1.GE8300.tgz -C /tmp && \
     cd /tmp/SDL2-2.26.1 && \
     ./configure --host=aarch64-linux-gnu \
                 --prefix=/usr \
