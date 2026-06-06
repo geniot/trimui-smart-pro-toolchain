@@ -35,11 +35,11 @@ RUN dpkg --add-architecture arm64 && \
 
 RUN apt-get update
 
-# Install Go 1.24.2
-COPY downloads/go1.24.2.linux-arm64.tar.gz .
-#RUN wget https://go.dev/dl/go1.24.2.linux-arm64.tar.gz && \
-RUN tar -C /usr/local -xzf go1.24.2.linux-arm64.tar.gz && \
-    rm go1.24.2.linux-arm64.tar.gz
+# Install Go 1.26.0
+COPY downloads/go1.26.0.linux-arm64.tar.gz .
+#RUN wget https://go.dev/dl/go1.26.0.linux-arm64.tar.gz && \
+RUN tar -C /usr/local -xzf go1.26.0.linux-arm64.tar.gz && \
+    rm go1.26.0.linux-arm64.tar.gz
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
