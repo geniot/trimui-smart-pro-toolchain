@@ -50,6 +50,12 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 RUN cargo --help
 RUN rustup target add aarch64-unknown-linux-gnu
 
+# Perry created with: git clone https://github.com/PerryTS/perry.git  && zip -r perry.zip perry
+COPY downloads/perry.zip .
+RUN unzip perry.zip
+RUN cd perry && cargo build --release
+ENV PATH="/perry/target/release:${PATH}"
+
 # Download and install Linaro toolchain
 COPY downloads/aarch64-linux-gnu-7.5.0-linaro.tgz .
 #RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/aarch64-linux-gnu-7.5.0-linaro.tgz && \
