@@ -13,8 +13,8 @@ RUN dpkg --add-architecture arm64 && \
         wget \
         curl \
         clang \
+        libssl-dev \
         build-essential \
-        cmake \
         cmake-curses-gui \
         libclang-dev \
         ca-certificates \
@@ -36,6 +36,16 @@ RUN dpkg --add-architecture arm64 && \
 
 RUN apt-get update
 
+# Install CMake
+#RUN wget https://github.com/Kitware/CMake/releases/download/v3.31.12/cmake-3.31.12.tar.gz && \
+COPY downloads/cmake-3.31.12.tar.gz  .
+RUN tar -xzvf cmake-3.31.12.tar.gz && \
+    cd cmake-3.31.12 && \
+    ./bootstrap
+RUN cd cmake-3.31.12 && make
+RUN cd cmake-3.31.12 && make install
+RUN cmake --version
+
 # Install Go 1.26.0
 COPY downloads/go1.26.0.linux-arm64.tar.gz .
 #RUN wget https://go.dev/dl/go1.26.0.linux-arm64.tar.gz && \
@@ -49,12 +59,6 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # Check cargo is visible
 RUN cargo --help
 RUN rustup target add aarch64-unknown-linux-gnu
-
-# Perry created with: git clone https://github.com/PerryTS/perry.git  && zip -r perry.zip perry
-COPY downloads/perry.zip .
-RUN unzip perry.zip
-RUN cd perry && cargo build --release
-ENV PATH="/perry/target/release:${PATH}"
 
 # Download and install Linaro toolchain
 COPY downloads/aarch64-linux-gnu-7.5.0-linaro.tgz .
